@@ -38,6 +38,28 @@ def check_missing(data: pd.DataFrame, plot: bool = False) -> str:
           \n{data.isna().sum()[data.isna().sum()>0]}"
         )
 
+def plot_all_dist(data,num_cols):
+    fig = make_subplots(rows=16, cols=6,
+    subplot_titles=tuple(num_cols))
+
+    k=0
+
+    for i in range(1,17):
+            for j in range(1,7):
+                    fig.add_trace(go.Histogram(x=data[num_cols[k]],name=num_cols[k]),
+                    row=i, col=j)
+                    k+=1
+                    if k ==94:
+                            break
+                    
+    fig.update_layout(width=1200, height=2000,xaxis_tickangle=-90,showlegend=False,
+            margin=dict(l=20, r=20, t=20, b=20),
+            font=dict(size=10)
+            )
+    fig.update_annotations(font_size=8)
+
+    fig.show()
+
 
 def plot_dist_bar(
     data1: pd.Series,
@@ -131,3 +153,30 @@ def model_performance(y_true, y_pred, threshold, title, model_type):
                 classification report: \n{class_report}")    
         return fig
 
+
+def detect_outliers_iqr(data):
+    outliers_list=[]
+    outliers_ind=[]
+    q1 = np.quantile(data, q=0.25)
+    q3 = np.quantile(data, q=0.75)
+    # print(q1, q3)
+    IQR = q3-q1
+    lwr_bound = q1-(3*IQR)
+    upr_bound = q3+(3*IQR)
+    # print(lwr_bound, upr_bound)
+    for i,k in zip(data,data.index): 
+        if (i<lwr_bound or i>upr_bound):
+            outliers_list.append(i)
+            outliers_ind.append(k)
+    return outliers_list,outliers_ind
+
+
+def treat_outliers(data,outliers_cols):
+    for c in outliers_cols:
+        val, ind = detect_outliers_iqr(data[c])
+        median_ = np.median(data[c])
+        upper = np.quantile(data[c],0.95)
+        lower = np.quantile(data[c],0.05)
+        data[c][ind] = data[c][ind].apply(lambda x: upper if x>median_ else (lower if x<median_ else x))
+    return data
+    
