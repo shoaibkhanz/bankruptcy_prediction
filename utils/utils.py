@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import plotly.io as pio
 
-pio.templates.default = "plotly_dark"
+#pio.templates.default = "plotly_dark"
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from sklearn.metrics import (PrecisionRecallDisplay, confusion_matrix, f1_score, precision_score,
@@ -38,7 +38,7 @@ def check_missing(data: pd.DataFrame, plot: bool = False) -> str:
           \n{data.isna().sum()[data.isna().sum()>0]}"
         )
 
-def plot_all_dist(data,num_cols):
+def plot_all_dist(data,num_cols,show_static_image=False):
     fig = make_subplots(rows=16, cols=6,
     subplot_titles=tuple(num_cols))
 
@@ -58,7 +58,11 @@ def plot_all_dist(data,num_cols):
             )
     fig.update_annotations(font_size=8)
 
-    fig.show()
+    if show_static_image:
+        fig.show("svg")
+    else:
+        fig.show()
+
 
 
 def plot_dist_bar(
@@ -68,6 +72,7 @@ def plot_dist_bar(
     index1: Optional[list] = None,
     index2: Optional[list] = None,
     custom_index: bool = False,
+    show_static_image=False
 ) -> go.Figure:
     """
     Uses plotly to plot bar charts with a simplified interface
@@ -102,7 +107,42 @@ def plot_dist_bar(
         xaxis2_tickangle=-90,
     )
 
-    fig.show()
+    if show_static_image:
+        fig.show("svg")
+    else:
+        fig.show()
+
+def plot_all_scatter(data, show_static_image=False):
+    num_cols = data.select_dtypes(include=np.number).columns
+    target0 = data[data["bankruptcy"]==0]
+    target1 = data[data["bankruptcy"]==1]
+    fig = make_subplots(rows=16, cols=6,
+    subplot_titles=tuple(num_cols))
+
+    k=0
+
+    for i in range(1,17):
+            for j in range(1,7):
+                    fig.add_trace(go.Scatter(x=target0[num_cols[k]],y=target1[num_cols[k]],
+                    mode="markers",marker_color=data["bankruptcy"]),
+                    row=i, col=j)
+                    k+=1
+                    if k ==94:
+                            break
+                    
+    fig.update_layout(width=1200, height=2400,xaxis_tickangle=-90,showlegend=False,
+            margin=dict(l=20, r=20, t=20, b=20),
+            font=dict(size=10)
+            )
+    fig.update_annotations(font_size=8)
+
+    if show_static_image:
+        fig.show("svg")
+    else:
+        fig.show()
+
+
+
 
 
 def get_dist(data: pd.DataFrame, col: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -152,7 +192,6 @@ def model_performance(y_true, y_pred, threshold, title, model_type):
                 confusion matrix: \n{confusion_matrix(y_true=y_true, y_pred=y_pred[:, 1] >threshold)}\n\
                 classification report: \n{class_report}")    
         return fig
-
 
 def detect_outliers_iqr(data):
     outliers_list=[]
