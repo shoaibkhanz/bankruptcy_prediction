@@ -25,6 +25,7 @@ numpyro = "^0.10.0"
 black = "^22.6.0"
 isort = "^5.10.1"
 optuna = "^2.10.1"
+imbalanced-learn = "^0.9.1"
 
 [tool.poetry.dev-dependencies]
 

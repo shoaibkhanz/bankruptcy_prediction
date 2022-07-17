@@ -2,7 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+notebook/catboost_info
 # C extensions
 *.so
 
