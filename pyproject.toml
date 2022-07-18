@@ -26,6 +26,8 @@ black = "^22.6.0"
 isort = "^5.10.1"
 optuna = "^2.10.1"
 imbalanced-learn = "^0.9.1"
+jupyterlab = "^3.4.3"
+nbconvert = "^6.5.0"
 
 [tool.poetry.dev-dependencies]
 

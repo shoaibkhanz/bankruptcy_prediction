@@ -6,9 +6,10 @@ import pandas as pd
 import plotly.io as pio
 
 #pio.templates.default = "plotly_dark"
+import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from sklearn.metrics import (PrecisionRecallDisplay, confusion_matrix, f1_score, precision_score,
+from sklearn.metrics import (ConfusionMatrixDisplay, PrecisionRecallDisplay, RocCurveDisplay, confusion_matrix, f1_score, plot_confusion_matrix, plot_roc_curve, precision_score,
                              recall_score,classification_report)
 
 
@@ -59,7 +60,7 @@ def plot_all_dist(data,num_cols,show_static_image=False):
     fig.update_annotations(font_size=8)
 
     if show_static_image:
-        fig.show("svg")
+        fig.show("png")
     else:
         fig.show()
 
@@ -108,7 +109,7 @@ def plot_dist_bar(
     )
 
     if show_static_image:
-        fig.show("svg")
+        fig.show("png")
     else:
         fig.show()
 
@@ -137,7 +138,7 @@ def plot_all_scatter(data, show_static_image=False):
     fig.update_annotations(font_size=8)
 
     if show_static_image:
-        fig.show("svg")
+        fig.show("png")
     else:
         fig.show()
 
@@ -178,7 +179,7 @@ def plot_scatter_high_corr(data, corr_data,corr_threshold=0.9 ,show_static_image
     #     fig.layout.annotations[i]["text"] = new_name
 
     if show_static_image:
-        fig.show("svg")
+        fig.show("png")
     else:
         fig.show()
 
@@ -203,36 +204,25 @@ def read_xlsx(path: str, sheet_name: str) -> pd.DataFrame:
     return data
 
 
-def model_performance(y_true, y_pred, threshold, title, model_type):
-    if model_type=="lightgbm":
-        fig = PrecisionRecallDisplay.from_predictions(y_true, y_pred, name=title)
-        pr_score = precision_score(y_pred=y_pred > threshold, y_true=y_true)
-        rec_score = recall_score(y_pred=y_pred > threshold, y_true=y_true)
-        _f1_score = f1_score(y_pred=y_pred > threshold, y_true=y_true)
-        class_report = classification_report(y_pred=y_pred > threshold, y_true=y_true)
-        
-        
-        print(f"Precision_Score: {pr_score},\
-        Recall Score: {rec_score},\
-        f1_score: {_f1_score},\n\
-        confusion matrix: \n{confusion_matrix(y_true=y_true, y_pred=y_pred>threshold)}\n\
-        classification report: \n{class_report}"
-        )
-        
-    else:
-        fig = PrecisionRecallDisplay.from_predictions(y_true, y_pred[:, 1], name=title)
-        pr_score = precision_score(y_pred=y_pred[:, 1] > threshold, y_true=y_true)
-        rec_score = recall_score(y_pred=y_pred[:, 1] > threshold, y_true=y_true)
-        _f1_score = f1_score(y_pred=y_pred[:, 1] > threshold, y_true=y_true)
-        class_report = classification_report(y_pred=y_pred[:, 1] > threshold, y_true=y_true)
+def model_performance(y_true_train,y_true_test, y_pred_train,y_pred_test, threshold, title):
 
 
-        print(f"Precision_Score: {pr_score},\
-                Recall Score: {rec_score},\
-                f1_score: {_f1_score},\n\
-                confusion matrix: \n{confusion_matrix(y_true=y_true, y_pred=y_pred[:, 1] >threshold)}\n\
-                classification report: \n{class_report}")    
-        return fig
+    fig1 =ConfusionMatrixDisplay.from_predictions(y_true_train, y_pred_train[:, 1] > threshold)
+    fig2 =ConfusionMatrixDisplay.from_predictions(y_true_test, y_pred_test[:, 1] > threshold)
+    
+    fig3 =RocCurveDisplay.from_predictions(y_true_train, y_pred_train[:, 1])
+    fig4 =RocCurveDisplay.from_predictions(y_true_test, y_pred_test[:, 1])
+    
+    fig5 = PrecisionRecallDisplay.from_predictions(y_true_train, y_pred_train[:, 1], name=title)
+    fig6 = PrecisionRecallDisplay.from_predictions(y_true_test, y_pred_test[:, 1], name=title)
+
+    class_report1 = classification_report(y_pred=y_pred_train[:, 1] > threshold, y_true=y_true_train)
+    class_report2 = classification_report(y_pred=y_pred_test[:, 1] > threshold, y_true=y_true_test)
+    
+    print(f"Train classification report: \n{class_report1}")
+    print(f"Test classification report: \n{class_report2}")
+
+
 
 def detect_outliers_iqr(data):
     outliers_list=[]
