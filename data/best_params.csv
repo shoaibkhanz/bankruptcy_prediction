@@ -1,0 +1,2 @@
+objective,colsample_bylevel,learning_rate,depth,iterations,l2_leaf_reg,bootstrap_type,boosting_type,scale_pos_weight,subsample
+Logloss,0.06686200153964729,0.05905528103657172,10,36,9,Bernoulli,Ordered,7,0.5583484532375913
