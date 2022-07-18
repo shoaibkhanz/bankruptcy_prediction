@@ -142,6 +142,47 @@ def plot_all_scatter(data, show_static_image=False):
         fig.show()
 
 
+def plot_scatter_high_corr(data, corr_data,corr_threshold=0.9 ,show_static_image=False):
+    corr_data_df = corr_data[corr_data["abs_correlation"]>=corr_threshold]
+    target0 = data[data["bankruptcy"]==0]
+    target1 = data[data["bankruptcy"]==1]
+    
+    # col_combination = []
+    # for k in range(28) :
+    #     col_combination.append(corr_data.iloc[k][0]+" <-> "+corr_data.iloc[k][1])
+    
+    fig = make_subplots(rows=7, cols=4
+    #,subplot_titles=tuple(num_cols)
+    )
+
+    k=0
+
+    for i in range(1,8):
+            for j in range(1,5):
+                    fig.add_trace(go.Scatter(x=data[corr_data_df.iloc[k][0]],
+                    y=data[corr_data_df.iloc[k][1]],
+                    mode="markers",marker_color=data["bankruptcy"],
+                    name=corr_data_df.iloc[k][0]+" <-> "+corr_data_df.iloc[k][1]),
+                    row=i, col=j)
+                    k+=1
+                    if k ==29:
+                            break
+                    
+    fig.update_layout(width=1800, height=2400,xaxis_tickangle=-90,showlegend=True,
+            margin=dict(l=20, r=20, t=20, b=20),
+            font=dict(size=10)
+            )
+    fig.update_annotations(font_size=8)
+    
+    # for i, new_name in enumerate(col_combination): 
+    #     fig.layout.annotations[i]["text"] = new_name
+
+    if show_static_image:
+        fig.show("svg")
+    else:
+        fig.show()
+
+
 
 
 
