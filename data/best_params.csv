@@ -1,2 +1,2 @@
-objective,colsample_bylevel,learning_rate,depth,iterations,l2_leaf_reg,bootstrap_type,boosting_type,scale_pos_weight,subsample
-Logloss,0.0979504361733678,0.050699390622994916,10,30,6,Bernoulli,Ordered,5,0.9711541971538866
+objective,colsample_bylevel,learning_rate,depth,iterations,l2_leaf_reg,bootstrap_type,boosting_type,scale_pos_weight,random_strength
+Logloss,0.08401802178063367,0.04559382474650909,6,38,10,MVS,Ordered,4,0.5398193090464866
