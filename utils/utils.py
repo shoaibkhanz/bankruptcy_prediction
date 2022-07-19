@@ -17,10 +17,14 @@ def get_shap_feat_importance(shap_values, data):
     """
     Get Feature Importance from SHAP
     """
-    shap_sum = np.abs(shap_values).mean(axis=0)
-    importance_df = pd.DataFrame([data.columns.tolist(), shap_sum.tolist()]).T
-    importance_df.columns = ["features", "shap_importance"]
-    importance_df = importance_df.sort_values("shap_importance", ascending=False)
+
+    vals_ = np.abs(shap_values).mean(0)
+    feature_names_ = data.columns
+
+    importance_df = pd.DataFrame(list(zip(feature_names_, vals_)),
+                                    columns=["features", "shap_importance"])
+    importance_df.sort_values(by=['shap_importance'],
+                                ascending=False, inplace=True)
     return importance_df
 
 
