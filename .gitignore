@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 notebook/catboost_info
+.DS_Store
 # C extensions
 *.so
 
